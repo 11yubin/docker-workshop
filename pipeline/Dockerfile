@@ -9,11 +9,11 @@ ENV PATH="/code/.venv/bin:$PATH"
 # RUN pip install pyarrow pandas
 # 3개의 파일을 current dir에 복사함
 # 일일이 설치하지 않아도, 필요한 lib들을 자동 설치
-COPY pyproject.toml .python-version uv.lock pipeline.py ./
+COPY pyproject.toml .python-version uv.lock ./
 
 # 동일한 의존성 설치
 RUN uv sync --locked
 
-# COPY pipeline.py .
+COPY ingest_data.py .
 
-ENTRYPOINT ["python", "pipeline.py"]
+ENTRYPOINT ["python", "ingest_data.py"]

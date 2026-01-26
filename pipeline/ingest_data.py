@@ -4,6 +4,7 @@
 import pandas as pd
 from sqlalchemy import create_engine
 from tqdm.auto import tqdm
+import click
 
 # data_dict = 'https://www.nyc.gov/assets/tlc/downloads/pdf/data_dictionary_trip_records_yellow.pdf'
 
@@ -34,18 +35,18 @@ parse_dates = [
 # print(pd.io.sql.get_schema(df, name='yellow_taxi_data', con=engine))
 # df.head(n=0).to_sql(name='yellow_taxi_data', con=engine, if_exists='replace')
 
-def run():
-    pg_user = 'root'
-    pg_pass = 'root'
-    pg_host = 'localhost'
-    pg_db = 'ny_taxi'
-    pg_port = 5432
-
+@click.command()
+@click.option('--pg-user', default='root', help='PostgreSQL user')
+@click.option('--pg-pass', default='root', help='PostgreSQL password')
+@click.option('--pg-host', default='localhost', help='PostgreSQL host')
+@click.option('--pg-port', default=5432, type=int, help='PostgreSQL port')
+@click.option('--pg-db', default='ny_taxi', help='PostgreSQL database name')
+@click.option('--target-table', default='yellow_taxi_data', help='Target table name')
+def run(pg_user, pg_pass, pg_host, pg_port, pg_db, target_table):
     year = 2021
     month = 1
 
     chunksize = 100000
-    target_table = 'yellow_taxi_data'
 
     prefix = 'https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow'
     url = f'{prefix}/yellow_tripdata_{year}-{month:02d}.csv.gz'
@@ -65,3 +66,6 @@ def run():
             con=engine, 
             if_exists='append'
             )
+
+if __name__=='__main__':
+    run()
